@@ -2,6 +2,7 @@ import requests
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
 import traceback
+from eval import eval_code
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
