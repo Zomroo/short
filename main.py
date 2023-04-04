@@ -34,7 +34,7 @@ def link_handler(client, message):
     client.send_message(chat_id=message.chat.id, text=short_link)
 
 # handle the /change command
-@api.on_message(pyrogram.filters.command(['change']))
+@app.on_message(pyrogram.filters.command(['change']))
 def change_handler(client, message):
     keyboard = [
         [pyrogram.InlineKeyboardButton("Shareus", callback_data='shareus')],
