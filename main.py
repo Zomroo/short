@@ -43,12 +43,12 @@ def is_allowed(update, context):
     if user_id in allowed_users:
         return True
     else:
-        context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, you are not authorized to use this command.")
-        return False
+        return None
 
 # Modify the link function to check if the user is allowed to use the command
 def link(update, context):
-    if not is_allowed(update, context):
+    allowed = is_allowed(update, context)
+    if allowed is None:
         return
     text = update.message.text
     try:
@@ -61,6 +61,7 @@ def link(update, context):
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.user_data['url'] = url
     context.bot.send_message(chat_id=update.effective_chat.id, text="Which shortener do you want to use?", reply_markup=reply_markup)
+
     
     
 def button(update, context):
