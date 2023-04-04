@@ -61,12 +61,27 @@ def button(update, context):
 
 def error(update, context):
     print(f"Update {update} caused error {context.error}")
+    
+def evaluate(update, context):
+    # Get the message text from the update
+    message_text = update.message.text
+
+    # Get the code to evaluate by removing the '/eval' command from the message text
+    code_to_evaluate = message_text.replace('/eval', '')
+
+    # Evaluate the code
+    result = eval_code(code_to_evaluate)
+
+    # Send the result back to the user
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)    
+    
 
 def main():
     updater = Updater("5931504207:AAHNzBcYEEX7AD29L0TqWF28axqivgoaKUk", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("link", link))
+    dp.add_handler(CommandHandler("eval", evaluate))
     dp.add_handler(CallbackQueryHandler(button))
     dp.add_error_handler(error)
     updater.start_polling()
