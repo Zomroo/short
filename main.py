@@ -85,6 +85,10 @@ def error(update, context):
     print(f"Update {update} caused error {context.error}")
     
 def evaluate(update, context):
+    # Check if user is allowed to use the command
+    if not is_allowed(update, context):
+        return
+
     # Get the message text from the update
     message_text = update.message.text
 
@@ -95,7 +99,8 @@ def evaluate(update, context):
     result = eval_code(code_to_evaluate)
 
     # Send the result back to the user
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)    
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)
+
     
 
 def main():
