@@ -1,6 +1,7 @@
 import requests
 from telegram import InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters, CallbackQueryHandler
+import traceback
 
 headers = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36'}
 
@@ -11,13 +12,21 @@ class ShortenerAPIs:
 class Shortner:
     @staticmethod
     def urlearn(query):
-        x = requests.get(f'https://indiurl.in.net/api?api=03e04ad37523efcd697cdf6e7676763a6a0c049d&url={query}').json()
+        try:
+            x = requests.get(f'https://indiurl.in.net/api?api=03e04ad37523efcd697cdf6e7676763a6a0c049d&url={query}').json()
+        except requests.exceptions.RequestException as e:
+            print(traceback.format_exc())
+            return None
         if x.get('status') == 'success':
             return x.get('shortenedUrl')
 
     @staticmethod
     def shareus(query):
-        x = requests.get(f'https://api.shareus.in/shortLink?token=H8eTsJrrYFZu0BcH944aEkek93p2&link={query}', headers=headers).text
+        try:
+            x = requests.get(f'https://api.shareus.in/shortLink?token=H8eTsJrrYFZu0BcH944aEkek93p2&link={query}', headers=headers).text
+        except requests.exceptions.RequestException as e:
+            print(traceback.format_exc())
+            return None
         if x is not None:
             return x
 
@@ -49,16 +58,9 @@ def button(update, context):
         query.edit_message_text(text=f"Here's your shortened link:\n\n{shortened_url}")
     else:
         query.edit_message_text(text="Sorry, an error occurred while shortening your link.")
-        
-def eval(update, context):
-    # Get the message text
-    text = update.message.text
-    # Extract the code to evaluate
-    code = text.split(' ', 1)[1]
-    # Evaluate the code
-    result = eval_code(code)
-    # Send the result back to the user
-    context.bot.send_message(chat_id=update.effective_chat.id, text=result)        
+
+def error(update, context):
+    print(f"Update {update} caused error {context.error}")
 
 def main():
     updater = Updater("5931504207:AAHNzBcYEEX7AD29L0TqWF28axqivgoaKUk", use_context=True)
@@ -66,7 +68,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("link", link))
     dp.add_handler(CallbackQueryHandler(button))
-    dp.add_handler(CommandHandler('eval', eval))
+    dp.add_error_handler(error)
     updater.start_polling()
     updater.idle()
 
