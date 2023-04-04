@@ -11,7 +11,7 @@ class ShortenerAPIs:
 class Shortner:
     @staticmethod
     def urlearn(query):
-        x = requests.get(f'https://urlearn.xyz/api?api=b3d7cfc604d7fd944e84533890593bc57960d7b5&url={query}').json()
+        x = requests.get(f'https://indiurl.in.net/api?api=03e04ad37523efcd697cdf6e7676763a6a0c049d&url={query}').json()
         if x.get('status') == 'success':
             return x.get('shortenedUrl')
 
