@@ -60,6 +60,23 @@ def link(update, context):
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.user_data['url'] = url
     context.bot.send_message(chat_id=update.effective_chat.id, text="Which shortener do you want to use?", reply_markup=reply_markup)
+    
+    
+def button(update, context):
+    query = update.callback_query
+    query.answer()
+    choice = int(query.data)
+    url = context.user_data['url']
+    if choice == ShortenerAPIs.URLEARN:
+        shortened_url = Shortner.urlearn(url)
+    elif choice == ShortenerAPIs.SHAREUS:
+        shortened_url = Shortner.shareus(url)
+    if shortened_url:
+        query.edit_message_text(text=shortened_url)
+    else:
+        query.edit_message_text(text="An error occurred while shortening the URL.")
+    
+    
 
 
 def error(update, context):
