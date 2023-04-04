@@ -49,6 +49,16 @@ def button(update, context):
         query.edit_message_text(text=f"Here's your shortened link:\n\n{shortened_url}")
     else:
         query.edit_message_text(text="Sorry, an error occurred while shortening your link.")
+        
+def eval(update, context):
+    # Get the message text
+    text = update.message.text
+    # Extract the code to evaluate
+    code = text.split(' ', 1)[1]
+    # Evaluate the code
+    result = eval_code(code)
+    # Send the result back to the user
+    context.bot.send_message(chat_id=update.effective_chat.id, text=result)        
 
 def main():
     updater = Updater("5931504207:AAHNzBcYEEX7AD29L0TqWF28axqivgoaKUk", use_context=True)
@@ -56,6 +66,7 @@ def main():
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("link", link))
     dp.add_handler(CallbackQueryHandler(button))
+    dp.add_handler(CommandHandler('eval', eval))
     updater.start_polling()
     updater.idle()
 
