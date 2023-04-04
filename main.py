@@ -33,7 +33,22 @@ class Shortner:
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Hi! I'm a link shortener bot. Send me a link and I'll shorten it for you.")
 
+# Define a list of allowed user IDs
+allowed_users = [12345678, 87654321]
+
+# Define a new function to check if the user is allowed to use the commands
+def is_allowed(update, context):
+    user_id = update.message.from_user.id
+    if user_id in allowed_users:
+        return True
+    else:
+        context.bot.send_message(chat_id=update.effective_chat.id, text="Sorry, you are not authorized to use this command.")
+        return False
+
+# Modify the link function to check if the user is allowed to use the command
 def link(update, context):
+    if not is_allowed(update, context):
+        return
     text = update.message.text
     try:
         command, url = text.split(" ", 1)
@@ -46,18 +61,6 @@ def link(update, context):
     context.user_data['url'] = url
     context.bot.send_message(chat_id=update.effective_chat.id, text="Which shortener do you want to use?", reply_markup=reply_markup)
 
-def button(update, context):
-    query = update.callback_query
-    api = int(query.data)
-    url = context.user_data['url']
-    if api == ShortenerAPIs.URLEARN:
-        shortened_url = Shortner.urlearn(url)
-    elif api == ShortenerAPIs.SHAREUS:
-        shortened_url = Shortner.shareus(url)
-    if shortened_url is not None:
-        query.edit_message_text(text=f"Here's your shortened link:\n\n{shortened_url}")
-    else:
-        query.edit_message_text(text="Sorry, an error occurred while shortening your link.")
 
 def error(update, context):
     print(f"Update {update} caused error {context.error}")
