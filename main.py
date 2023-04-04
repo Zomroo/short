@@ -1,40 +1,50 @@
-import telegram
 import requests
+import telegram
+from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
 
-# set up Telegram bot
+# Load Telegram API token from file
+with open("telegram_api_token.txt") as f:
+    telegram_api_token = f.read().strip()
+
+# Create Telegram bot
+bot = telegram.Bot(token=telegram_api_token)
+
+
+# URL shortening functions
+def retrieve_original_url(short_url):
+    r = requests.get(short_url)
+    return r.url
+
+
+# Telegram bot functions
+def start(update, context):
+    context.bot.send_message(chat_id=update.message.chat_id, text="Hi! I can help you retrieve the original URL of a shortened link. Just send me the link and I'll do the rest.")
+
+
+def shorten(update, context):
+    message = update.message
+    text = message.text
+    if text is not None and not (text.startswith("http") or text.startswith("www")):
+        url = message.text
+        original_url = retrieve_original_url(url)
+        context.bot.send_message(chat_id=message.chat_id, text=original_url)
+
+
 def main():
-    # get Telegram API token
-    with open("telegram_api_token.txt", "r") as f:
-        token = f.read().strip()
+    # Set up the Telegram updater and dispatcher
+    updater = Updater(token=telegram_api_token, use_context=True)
+    dispatcher = updater.dispatcher
 
-    # create bot
-    bot = telegram.Bot(token=token)
+    # Add command handlers
+    dispatcher.add_handler(CommandHandler("start", start))
 
-    # start polling for updates
-    updates = bot.get_updates()
-    last_update_id = None
-    while True:
-        for update in updates:
-            # ignore updates that aren't messages
-            if not update.message:
-                continue
+    # Add message handlers
+    dispatcher.add_handler(MessageHandler(Filters.text, shorten))
 
-            # ignore messages that don't contain a URL
-            text = update.message.text
-            if not (text.startswith("http") or text.startswith("www")):
-                continue
+    # Start the bot
+    updater.start_polling()
+    updater.idle()
 
-            # check if the URL is a shortened link
-            response = requests.head(text, allow_redirects=True)
-            if response.url != text:
-                original_url = response.url
-                bot.send_message(chat_id=update.message.chat_id, text=f"Original URL: {original_url}")
 
-            # update last_update_id to avoid duplicate processing
-            last_update_id = update.update_id
-
-        # poll for new updates
-        updates = bot.get_updates(offset=last_update_id+1)
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
