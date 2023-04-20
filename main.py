@@ -104,7 +104,7 @@ def evaluate(update, context):
     
 
 def main():
-    updater = Updater("5931504207:AAHNzBcYEEX7AD29L0TqWF28axqivgoaKUk", use_context=True)
+    updater = Updater("5931504207:AAF-jzKC8USclrFYrtcaeAZifQcmEcwFNe4", use_context=True)
     dp = updater.dispatcher
     dp.add_handler(CommandHandler("start", start))
     dp.add_handler(CommandHandler("link", link))
