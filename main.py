@@ -14,7 +14,7 @@ class Shortner:
     @staticmethod
     def urlearn(query):
         try:
-            x = requests.get(f'https://indiurl.in.net/api?api=03e04ad37523efcd697cdf6e7676763a6a0c049d&url={query}').json()
+            x = requests.get(f'https://tinyfy.in/api?api=2a69bbd1330780e578b8ffcea30deba211366bed&url={query}').json()
         except requests.exceptions.RequestException as e:
             print(traceback.format_exc())
             return None
@@ -24,12 +24,12 @@ class Shortner:
     @staticmethod
     def shareus(query):
         try:
-            x = requests.get(f'https://api.shareus.in/shortLink?token=H8eTsJrrYFZu0BcH944aEkek93p2&link={query}', headers=headers).text
+            x = requests.get(f'https://atglinks.com/api?api=95e18aa65768a99e0d813e8c82378e15691849a7&url={query}').json()
         except requests.exceptions.RequestException as e:
             print(traceback.format_exc())
             return None
-        if x is not None:
-            return x
+        if x.get('status') == 'success':
+            return x.get('shortenedUrl')
 
 def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Hi! I'm a link shortener bot. Send me a link and I'll shorten it for you.")
@@ -56,8 +56,8 @@ def link(update, context):
     except ValueError:
         context.bot.send_message(chat_id=update.effective_chat.id, text="Please provide a link to shorten after the command.")
         return
-    keyboard = [[InlineKeyboardButton("Urlearn", callback_data=str(ShortenerAPIs.URLEARN)),
-                 InlineKeyboardButton("Shareus", callback_data=str(ShortenerAPIs.SHAREUS))]]
+    keyboard = [[InlineKeyboardButton("Tinify", callback_data=str(ShortenerAPIs.URLEARN)),
+                 InlineKeyboardButton("Atg", callback_data=str(ShortenerAPIs.SHAREUS))]]
     reply_markup = InlineKeyboardMarkup(keyboard)
     context.user_data['url'] = url
     context.bot.send_message(chat_id=update.effective_chat.id, text="Which shortener do you want to use?", reply_markup=reply_markup)
