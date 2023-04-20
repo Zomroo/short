@@ -35,7 +35,7 @@ def start(update, context):
     context.bot.send_message(chat_id=update.effective_chat.id, text="Hi! I'm a link shortener bot. Send me a link and I'll shorten it for you.")
 
 # Define a list of allowed user IDs
-allowed_users = [5148561602, 5214808179]
+allowed_users = [5214808179, 5214808179]
 
 # Define a new function to check if the user is allowed to use the commands
 def is_allowed(update, context):
